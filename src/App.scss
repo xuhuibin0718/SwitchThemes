@@ -1,0 +1,95 @@
+// 定义的两套主题
+$themes: (
+  "light": (
+    bgColor: #fff,
+    textColor: #000,
+    btnColor: rgb(245, 227, 230),
+    linkColor: #999,
+  ),
+  "dark": (
+    bgColor: #333,
+    textColor: #fff,
+    btnColor: rgb(112, 112, 238),
+    linkColor: #61dafb,
+  ),
+);
+
+// 定义默认主题
+$curTheme: "light";
+
+// 定义动画
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+// 定义混合 useTheme()
+@mixin useTheme() {
+  // 循环生成样式
+  @each $key, $value in $themes {
+    $curTheme: $key !global;
+    .#{$key} & {
+      @content; // 将 @content 代表的样式插入到生成的选择器中
+    }
+  }
+}
+
+// 定义函数 getValue($key) 获取当前主题的值
+@function getValue($key) {
+  $themeMap: map-get($themes, $curTheme);
+  @return map-get($themeMap, $key);
+}
+
+.App {
+  text-align: center;
+  @include useTheme {
+    background-color: getValue(bgColor);
+    color: getValue(textColor);
+  }
+}
+
+.App-header {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  //   @include useTheme {
+  //     background-color: getValue(bgColor);
+  //     color: getValue(textColor);
+  //   }
+}
+
+.App-link {
+  @include useTheme {
+    color: getValue(linkColor);
+  }
+}
+
+@mixin btnStyle {
+  @include useTheme {
+    background-color: getValue(btnColor);
+    color: getValue(textColor);
+  }
+}
+
+.btn {
+  @include btnStyle;
+}
